@@ -102,3 +102,7 @@ func (t *Textfield) Activate() {
 func (t *Textfield) Deactivate() {
 	sdl.StopTextInput()
 }
+
+func (t *Textfield) Cursor() sdl.SystemCursor {
+	return sdl.SYSTEM_CURSOR_IBEAM
+}

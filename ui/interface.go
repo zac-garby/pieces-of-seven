@@ -81,9 +81,26 @@ func (i *Interface) Render(rend *sdl.Renderer) {
 }
 
 func (i *Interface) Update(dt float64) {
+	xi, yi, _ := sdl.GetMouseState()
+
+	var (
+		x = int32(xi)
+		y = int32(yi)
+	)
+
+	cursor := sdl.CreateSystemCursor(sdl.SYSTEM_CURSOR_ARROW)
+
 	for _, comp := range i.components {
 		comp.Update(dt)
+
+		rect := comp.GetRect()
+
+		if x >= rect.X && y >= rect.Y && x < rect.X+rect.W && y < rect.Y+rect.H {
+			cursor = sdl.CreateSystemCursor(comp.Cursor())
+		}
 	}
+
+	sdl.SetCursor(cursor)
 }
 
 func (i *Interface) HandleEvent(event sdl.Event) {

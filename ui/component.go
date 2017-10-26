@@ -18,4 +18,6 @@ type Component interface {
 
 	Activate()
 	Deactivate()
+
+	Cursor() sdl.SystemCursor
 }

@@ -106,3 +106,7 @@ func (t *Text) HandleEvent(event sdl.Event) {}
 
 func (t *Text) Activate()   {}
 func (t *Text) Deactivate() {}
+
+func (t *Text) Cursor() sdl.SystemCursor {
+	return sdl.SYSTEM_CURSOR_ARROW
+}
