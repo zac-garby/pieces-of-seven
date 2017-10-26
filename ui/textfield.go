@@ -55,7 +55,7 @@ func (t *Textfield) GetRect() *sdl.Rect {
 
 func (t *Textfield) Render(rend *sdl.Renderer) {
 	rend.SetDrawColor(255, 255, 255, 255)
-	rend.DrawRect(t.Rect)
+	rend.FillRect(t.Rect)
 
 	t.text.Render(rend)
 }
@@ -64,9 +64,9 @@ func (t *Textfield) Update(float64) {
 	if len(t.Text) > 0 {
 		t.text.Text = t.Text
 
-		t.text.R = 255
-		t.text.G = 255
-		t.text.B = 255
+		t.text.R = 0
+		t.text.G = 0
+		t.text.B = 0
 	} else {
 		t.text.Text = t.Placeholder
 
