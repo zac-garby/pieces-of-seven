@@ -68,7 +68,7 @@ func (w *World) getTexRectForMarchingSquares(x, y int) sdl.Rect {
 	// 6 7 8
 
 	matches := func(x, y int) bool {
-		if x < 0 || y < 0 || x > Width || y > Height {
+		if x < 0 || y < 0 || x >= Width || y >= Height {
 			return true
 		}
 
