@@ -25,9 +25,10 @@ func New(ld *loader.Loader) *JoinGame {
 	join.inter.Add("text", ui.NewText(
 		"Enter the address of a server below:",
 		ld.Fonts["body"],
+		ui.CenterAlign,
 	))
 
-	join.inter.Layout(600-300, 100, 600, 40)
+	join.inter.Layout(300, 100, 600, 40)
 
 	return join
 }

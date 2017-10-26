@@ -7,12 +7,13 @@ import (
 
 // A Text element displays a line of text.
 type Text struct {
-	Text string
-	Font *ttf.Font
-	Rect *sdl.Rect
+	Text      string
+	Font      *ttf.Font
+	Rect      *sdl.Rect
+	Alignment Alignment
 }
 
-func NewText(text string, font *ttf.Font) *Text {
+func NewText(text string, font *ttf.Font, align Alignment) *Text {
 	return &Text{
 		Text: text,
 		Font: font,
@@ -20,14 +21,14 @@ func NewText(text string, font *ttf.Font) *Text {
 			X: 0, Y: 0,
 			W: 0, H: 0,
 		},
+		Alignment: align,
 	}
 }
 
 // SetRect only modifies the coordinates in this
 // case.
 func (t *Text) SetRect(r *sdl.Rect) {
-	t.Rect.X = r.X
-	t.Rect.Y = r.Y
+	t.Rect = r
 }
 
 // GetRect returns the text's rectangle.
@@ -48,10 +49,27 @@ func (t *Text) Render(rend *sdl.Renderer) {
 		panic(err)
 	}
 
+	srect := solid.ClipRect
 	dest := &solid.ClipRect
 	dest.X = t.Rect.X
 	dest.Y = t.Rect.Y
 
+	// Center vertically
+	dest.Y += (t.Rect.H - srect.H) / 2
+
+	if t.Alignment == LeftAlign {
+		// Do nothing, since it's already left aligned
+	}
+
+	if t.Alignment == CenterAlign {
+		dest.X += (t.Rect.W - srect.W) / 2
+	}
+
+	if t.Alignment == RightAlign {
+		dest.X += t.Rect.W - srect.W
+	}
+
+	// Draw the texture
 	rend.Copy(tex, nil, dest)
 
 	solid.Free()

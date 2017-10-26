@@ -26,14 +26,16 @@ func New(ld *loader.Loader) *MainMenu {
 	menu.inter.Add("host", ui.NewText(
 		"Host a server via the server package.",
 		ld.Fonts["body"],
+		ui.LeftAlign,
 	))
 
 	menu.inter.Add("join", ui.NewText(
 		"Press [C] to join one.",
 		ld.Fonts["body"],
+		ui.LeftAlign,
 	))
 
-	menu.inter.Layout(30, 30, 200, 40)
+	menu.inter.Layout(30, 30, 1200-60, 40)
 
 	return menu
 }
