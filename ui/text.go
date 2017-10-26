@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"math"
+
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 )
@@ -11,9 +13,11 @@ type Text struct {
 	Font      *ttf.Font
 	Rect      *sdl.Rect
 	Alignment Alignment
+
+	R, G, B uint8
 }
 
-func NewText(text string, font *ttf.Font, align Alignment) *Text {
+func NewText(text string, r, g, b uint8, font *ttf.Font, align Alignment) *Text {
 	return &Text{
 		Text: text,
 		Font: font,
@@ -22,6 +26,9 @@ func NewText(text string, font *ttf.Font, align Alignment) *Text {
 			W: 0, H: 0,
 		},
 		Alignment: align,
+		R:         r,
+		G:         g,
+		B:         b,
 	}
 }
 
@@ -39,7 +46,7 @@ func (t *Text) GetRect() *sdl.Rect {
 // Render draws the text to the render, disregarding
 // the width and height components of the rect.
 func (t *Text) Render(rend *sdl.Renderer) {
-	solid, err := t.Font.RenderUTF8_Solid(t.Text, sdl.Color{R: 255, G: 255, B: 255, A: 255})
+	solid, err := t.Font.RenderUTF8_Solid(t.Text, sdl.Color{R: t.R, G: t.G, B: t.B, A: 255})
 	if err != nil {
 		panic(err)
 	}
@@ -70,7 +77,21 @@ func (t *Text) Render(rend *sdl.Renderer) {
 	}
 
 	// Draw the texture
-	rend.Copy(tex, nil, dest)
+	rend.Copy(tex,
+		&sdl.Rect{
+			0,
+			0,
+			t.Rect.W,
+			t.Rect.H,
+		},
+
+		&sdl.Rect{
+			X: dest.X,
+			Y: dest.Y,
+			W: int32(math.Min(float64(dest.W), float64(t.Rect.W))),
+			H: int32(math.Min(float64(dest.H), float64(t.Rect.H))),
+		},
+	)
 
 	solid.Free()
 	tex.Destroy()

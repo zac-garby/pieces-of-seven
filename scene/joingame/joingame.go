@@ -23,7 +23,14 @@ func New(ld *loader.Loader) *JoinGame {
 	}
 
 	join.inter.Add("text", ui.NewText(
-		"Enter the address of a server below:",
+		"Enter an IP to connect to:",
+		255, 255, 255,
+		ld.Fonts["body"],
+		ui.CenterAlign,
+	))
+
+	join.inter.Add("addr", ui.NewTextfield(
+		"127.0.0.1:12358",
 		ld.Fonts["body"],
 		ui.CenterAlign,
 	))
