@@ -92,6 +92,11 @@ func (t *Textfield) HandleEvent(event sdl.Event) {
 		}
 
 		t.Text += str
+
+	case *sdl.KeyDownEvent:
+		if evt.Keysym.Sym == sdl.K_BACKSPACE && len(t.Text) > 0 {
+			t.Text = t.Text[:len(t.Text)-1]
+		}
 	}
 }
 
