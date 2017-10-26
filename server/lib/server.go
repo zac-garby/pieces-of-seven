@@ -12,6 +12,9 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+// EOT is the end of transmission character
+const EOT byte = 4
+
 type Server struct {
 	World   *world.World
 	Players map[uuid.UUID]*entity.Ship
@@ -73,7 +76,7 @@ func (s *Server) handleConnection(conn net.Conn) {
 	reader := bufio.NewReader(conn)
 
 	for {
-		bytes, err := reader.ReadBytes('\n')
+		bytes, err := reader.ReadBytes(EOT)
 
 		// An error will most likely occur because the
 		// connection was dropped, in which case the
@@ -122,7 +125,7 @@ func (s *Server) Send(id uuid.UUID, msg interface{}) error {
 		return err
 	}
 
-	b = append(b, '\n')
+	b = append(b, EOT)
 	s.connections[id].Write(b)
 
 	return nil

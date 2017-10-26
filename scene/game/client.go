@@ -11,6 +11,9 @@ import (
 	"github.com/Zac-Garby/pieces-of-seven/message"
 )
 
+// EOT is the end of transmission character
+const EOT byte = 4
+
 var ErrNoConnection = errors.New("no connection established")
 
 type Client struct {
@@ -43,7 +46,7 @@ func (c *Client) Listen() {
 	reader := bufio.NewReader(conn)
 
 	for {
-		reply, err := reader.ReadBytes('\n')
+		reply, err := reader.ReadBytes(EOT)
 
 		// An error here will most likely be because
 		// the connection to the server was dropped.
@@ -74,7 +77,7 @@ func (c *Client) Send(msg interface{}) error {
 		return err
 	}
 
-	b = append(b, '\n')
+	b = append(b, EOT)
 
 	if c.conn != nil {
 		c.conn.Write(b)
