@@ -11,5 +11,13 @@ type Component interface {
 	GetRect() *sdl.Rect
 
 	Render(rend *sdl.Renderer)
-	Update(dt float64, mx, my uint)
+	Update(dt float64)
+
+	// HandleEvent is called only on the active component
+	HandleEvent(event sdl.Event)
+
+	Activate()
+	Deactivate()
+
+	Cursor() sdl.SystemCursor
 }

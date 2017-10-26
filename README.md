@@ -47,9 +47,8 @@ This one's slightly different because the assets have to be visible in the curre
 Also, the use of `go install` is because just running `main.go` won't give the program access to
 `scenes.go`, which it needs. This will be fixed soon.
 
-These commands should open a window telling you to press `C`. Press it, and it will attempt to connect
-to `localhost:12358`. This is because I haven't yet made a text input to specify which IP you want to
-connect to (I'll do that soon).
+These commands should open a window telling you to press `C`. It will ask you for address to connect
+to, which defaults to `localhost:12358`. Press `RETURN` to join the specified server.
 
 Once you're in a game, you can't really do much yet. You can click somewhere, and your ship will sail
 to the tile you clicked. Go back to the main menu by pressing `ESC`.

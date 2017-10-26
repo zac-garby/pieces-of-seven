@@ -25,15 +25,19 @@ func New(ld *loader.Loader) *MainMenu {
 
 	menu.inter.Add("host", ui.NewText(
 		"Host a server via the server package.",
+		255, 255, 255,
 		ld.Fonts["body"],
+		ui.LeftAlign,
 	))
 
 	menu.inter.Add("join", ui.NewText(
 		"Press [C] to join one.",
+		255, 255, 255,
 		ld.Fonts["body"],
+		ui.LeftAlign,
 	))
 
-	menu.inter.Layout(30, 30, 200, 40)
+	menu.inter.Layout(30, 30, 1200-60, 40)
 
 	return menu
 }
@@ -48,7 +52,7 @@ func (m *MainMenu) Exit() {}
 // scene will be changed to in the main loop, or, if nil is
 // returned, the scene won't be changed.
 func (m *MainMenu) Update(dt float64) string {
-	m.inter.Update(dt, 0, 0)
+	m.inter.Update(dt)
 
 	return ""
 }
@@ -65,8 +69,11 @@ func (m *MainMenu) HandleEvent(event sdl.Event) string {
 	case *sdl.KeyUpEvent:
 		switch evt.Keysym.Sym {
 		case sdl.K_c:
-			return "join"
+			return "joingame"
 		}
+
+	default:
+		m.inter.HandleEvent(event)
 	}
 
 	return ""
