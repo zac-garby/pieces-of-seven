@@ -65,7 +65,7 @@ func (m *MainMenu) HandleEvent(event sdl.Event) string {
 	case *sdl.KeyUpEvent:
 		switch evt.Keysym.Sym {
 		case sdl.K_c:
-			return "join"
+			return "joingame"
 		}
 	}
 
