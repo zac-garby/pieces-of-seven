@@ -2,6 +2,7 @@ package world
 
 import (
 	"github.com/Zac-Garby/pieces-of-seven/geom"
+	"github.com/Zac-Garby/pieces-of-seven/loader"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -17,6 +18,8 @@ const Height = 32
 type World struct {
 	Tiles [Height][Width]Tile
 	*Graph
+
+	frame int32
 }
 
 // New creates a new World instance.
@@ -37,20 +40,27 @@ func New() *World {
 
 // Render renders the world to the given
 // SDL renderer.
-func (w *World) Render(rend *sdl.Renderer, viewOffset *geom.Vector, width, height int) {
+func (w *World) Render(rend *sdl.Renderer, ld *loader.Loader, viewOffset *geom.Vector, width, height int) {
 	for tile, data := range tileData {
-		rend.SetDrawColor(data.Colour[0], data.Colour[1], data.Colour[2], data.Colour[3])
+		tex := ld.Textures[data.Texture]
+		frame := w.frame % data.Frames
+
 		rects := w.getRectsOfType(tile, viewOffset, width, height)
 
-		if len(rects) > 0 {
-			rend.FillRects(rects)
+		for _, rect := range rects {
+			rend.Copy(tex, &sdl.Rect{
+				X: 15 * frame,
+				Y: 0,
+				W: 15,
+				H: 15,
+			}, &rect)
 		}
 	}
 }
 
 // Tick steps the world by one tick.
 func (w *World) Tick() {
-
+	w.frame += 1
 }
 
 func (w *World) getRectsOfType(t Tile, viewOffset *geom.Vector, width, height int) []sdl.Rect {

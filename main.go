@@ -36,8 +36,10 @@ func main() {
 
 	ld.Queue(map[string]loader.Asset{
 		// Textures
-		"ship": {Path: "assets/sprites/ship.png", Type: loader.Texture, Data: make(map[string]int)},
-		"icon": {Path: "assets/icon.png", Type: loader.Texture, Data: make(map[string]int)},
+		"ship":  {Path: "assets/sprites/ship.png", Type: loader.Texture, Data: make(map[string]int)},
+		"icon":  {Path: "assets/icon.png", Type: loader.Texture, Data: make(map[string]int)},
+		"water": {Path: "assets/tiles/water.png", Type: loader.Texture, Data: make(map[string]int)},
+		"sand":  {Path: "assets/tiles/sand.png", Type: loader.Texture, Data: make(map[string]int)},
 
 		// Fonts
 		"body": {Path: "assets/fonts/DOS VGA.ttf", Type: loader.Font, Data: map[string]int{"size": 26}},

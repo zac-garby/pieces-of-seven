@@ -10,7 +10,8 @@ type Tile int
 type TileData struct {
 	Name     string
 	Passable bool
-	Colour   Colour
+	Texture  string
+	Frames   int32
 }
 
 const (
@@ -26,16 +27,18 @@ const (
 type Colour [4]uint8
 
 var tileData = map[Tile]*TileData{
-	0: &TileData{
+	Water: {
 		Name:     "water",
 		Passable: true,
-		Colour:   Colour{102, 156, 232, 255},
+		Texture:  "water",
+		Frames:   1,
 	},
 
-	1: &TileData{
+	Land: {
 		Name:     "land",
 		Passable: false,
-		Colour:   Colour{232, 216, 102, 255},
+		Texture:  "sand",
+		Frames:   1,
 	},
 }
 

@@ -83,7 +83,7 @@ func (g *Game) Update(dt float64) string {
 // Render renders a game (i.e. the objects inside it)
 // onto an SDL renderer.
 func (g *Game) Render(rend *sdl.Renderer, width, height int) {
-	g.World.Render(rend, g.ViewOffset, width, height)
+	g.World.Render(rend, g.ld, g.ViewOffset, width, height)
 
 	for _, e := range g.Entities {
 		e.Render(g.ViewOffset, g.ld, rend)
@@ -143,6 +143,8 @@ func (g *Game) PositionToTile(x, y int32) (int32, int32) {
 }
 
 func (g *Game) tick() {
+	g.World.Tick()
+
 	for _, e := range g.Entities {
 		e.Step()
 	}
