@@ -28,7 +28,7 @@ func main() {
 	ttf.Init()
 	defer ttf.Quit()
 
-	window, renderer, _ := sdl.CreateWindowAndRenderer(width, height, sdl.WINDOW_SHOWN)
+	window, renderer, _ := sdl.CreateWindowAndRenderer(width, height, sdl.WINDOW_SHOWN|sdl.RENDERER_ACCELERATED)
 	defer window.Destroy()
 	defer renderer.Destroy()
 
