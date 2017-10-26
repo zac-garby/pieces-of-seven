@@ -65,7 +65,15 @@ func (j *JoinGame) HandleEvent(event sdl.Event) string {
 	case *sdl.KeyUpEvent:
 		switch evt.Keysym.Sym {
 		case sdl.K_RETURN:
-			return "join"
+			addr, _ := j.inter.Get("addr")
+			field := addr.(*ui.Textfield)
+			ip := field.Text
+
+			if len(ip) == 0 {
+				ip = "localhost:12358"
+			}
+
+			return "join " + ip
 		}
 
 	default:

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/Zac-Garby/pieces-of-seven/loader"
 	"github.com/Zac-Garby/pieces-of-seven/scene"
 	"github.com/Zac-Garby/pieces-of-seven/scene/game"
@@ -9,9 +11,11 @@ import (
 )
 
 func makeScene(name string, ld *loader.Loader) scene.Scene {
-	switch name {
+	split := strings.Split(name, " ")
+
+	switch split[0] {
 	case "join":
-		return game.New(ld, ":12358")
+		return game.New(ld, split[1])
 	case "mainmenu":
 		return mainmenu.New(ld)
 	case "joingame":
