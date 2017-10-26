@@ -35,6 +35,9 @@ func NewTextfield(placeholder string, font *ttf.Font, align Alignment) *Textfiel
 	}
 }
 
+// SetRect sets the text field's bounding rect to r
+// and the inner text's bounding rect to a slightly
+// smaller, translated version of r.
 func (t *Textfield) SetRect(r *sdl.Rect) {
 	t.Rect = r
 
@@ -57,6 +60,45 @@ func (t *Textfield) Render(rend *sdl.Renderer) {
 	t.text.Render(rend)
 }
 
-func (t *Textfield) Update(float64, uint, uint) {
-	t.Text = t.text.Text
+func (t *Textfield) Update(float64) {
+	if len(t.Text) > 0 {
+		t.text.Text = t.Text
+
+		t.text.R = 255
+		t.text.G = 255
+		t.text.B = 255
+	} else {
+		t.text.Text = t.Placeholder
+
+		t.text.R = 128
+		t.text.G = 128
+		t.text.B = 128
+	}
+}
+
+func (t *Textfield) HandleEvent(event sdl.Event) {
+	switch evt := event.(type) {
+	case *sdl.TextInputEvent:
+		str := ""
+
+		// evt.Text is a null terminated c-string
+		// str is the normal Go string
+		for _, ch := range evt.Text {
+			if ch == 0 {
+				break
+			}
+
+			str += string(ch)
+		}
+
+		t.Text += str
+	}
+}
+
+func (t *Textfield) Activate() {
+	sdl.StartTextInput()
+}
+
+func (t *Textfield) Deactivate() {
+	sdl.StopTextInput()
 }

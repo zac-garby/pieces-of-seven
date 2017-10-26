@@ -48,7 +48,7 @@ func (j *JoinGame) Exit() {}
 
 // Update updates the scene by 'dt' seconds.
 func (j *JoinGame) Update(dt float64) string {
-	j.inter.Update(dt, 0, 0)
+	j.inter.Update(dt)
 
 	return ""
 }
@@ -67,6 +67,9 @@ func (j *JoinGame) HandleEvent(event sdl.Event) string {
 		case sdl.K_RETURN:
 			return "join"
 		}
+
+	default:
+		j.inter.HandleEvent(event)
 	}
 
 	return ""

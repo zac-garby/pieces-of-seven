@@ -52,7 +52,7 @@ func (m *MainMenu) Exit() {}
 // scene will be changed to in the main loop, or, if nil is
 // returned, the scene won't be changed.
 func (m *MainMenu) Update(dt float64) string {
-	m.inter.Update(dt, 0, 0)
+	m.inter.Update(dt)
 
 	return ""
 }
@@ -71,6 +71,9 @@ func (m *MainMenu) HandleEvent(event sdl.Event) string {
 		case sdl.K_c:
 			return "joingame"
 		}
+
+	default:
+		m.inter.HandleEvent(event)
 	}
 
 	return ""

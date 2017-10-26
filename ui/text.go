@@ -98,4 +98,11 @@ func (t *Text) Render(rend *sdl.Renderer) {
 }
 
 // Update does nothing, since text doesn't need to be updated.
-func (t *Text) Update(float64, uint, uint) {}
+func (t *Text) Update(float64) {}
+
+// HandleEvent does nothing, since text doesn't do anything with
+// events.
+func (t *Text) HandleEvent(event sdl.Event) {}
+
+func (t *Text) Activate()   {}
+func (t *Text) Deactivate() {}
