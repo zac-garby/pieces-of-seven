@@ -54,7 +54,7 @@ func NewChatLog() *ChatLog {
 
 			{
 				Sender:  "server",
-				Content: "hello, world. hello, world. hello, world. hello, world. hello, world. hello, world. hello, world.",
+				Content: "hello, world. hello, world. hello, world. hello, world. testing wrapping. hello, world. hello, world. hello, world.",
 				Type:    ServerMessage,
 				Time:    time.Now(),
 			},
@@ -121,9 +121,20 @@ func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, hei
 				W: src.W,
 				H: src.H,
 			}
+
+			separator = &sdl.Rect{
+				X: int32(nextPos.X),
+				Y: int32(uint(height) - nextPos.Y),
+				W: int32(width - 20),
+				H: 1,
+			}
 		)
 
 		rend.Copy(tex, src, dest)
+
+		rend.SetDrawColor(50, 50, 50, 255)
+		rend.FillRect(separator)
+
 		nextPos.Y += uint(src.H + 10)
 	}
 }
