@@ -7,10 +7,10 @@ import (
 )
 
 // Width is the width, in Tiles, of the World.
-const Width = 32
+const Width = 256
 
 // Height is the height, in Tiles, of the World.
-const Height = 32
+const Height = 256
 
 // The World is a 2d slice of Tiles.
 // Coordinate (x, y) is at index [y-1][x-1].
