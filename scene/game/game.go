@@ -90,8 +90,8 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 	}
 
 	if g.Player != nil {
-		g.ViewOffset.X = float64(g.Player.ApparentPos.X*world.TileSize) - float64(width/2)
-		g.ViewOffset.Y = float64(g.Player.ApparentPos.Y*world.TileSize) - float64(height/2)
+		g.ViewOffset.X = lerp(g.ViewOffset.X, float64(g.Player.ApparentPos.X*world.TileSize)-float64(width/2), 0.01)
+		g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(g.Player.ApparentPos.Y*world.TileSize)-float64(height/2), 0.01)
 	}
 }
 
@@ -153,4 +153,8 @@ func (g *Game) tick() {
 	for _, e := range g.Entities {
 		e.Step()
 	}
+}
+
+func lerp(a, b, t float64) float64 {
+	return (1-t)*a + t*b
 }
