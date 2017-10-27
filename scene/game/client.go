@@ -135,17 +135,9 @@ func (c *Client) handleMessage(msg interface{}) {
 	case *message.PlayerLeft:
 		for i, ent := range c.Game.Entities {
 			if ent == c.Game.Players[m.ID] {
-				var start []entity.Entity
-				if i > 0 {
-					start = c.Game.Entities[:i-1]
-				}
-
-				var end []entity.Entity
-				if i+1 < len(c.Game.Entities) {
-					end = c.Game.Entities[i+1:]
-				}
-
-				c.Game.Entities = append(start, end...)
+				copy(c.Game.Entities[i:], c.Game.Entities[i+1:])
+				c.Game.Entities[len(c.Game.Entities)-1] = nil
+				c.Game.Entities = c.Game.Entities[:len(c.Game.Entities)-1]
 
 				break
 			}

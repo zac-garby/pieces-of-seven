@@ -13,6 +13,10 @@ import (
 // TickRate is the amount of ticks per second
 const TickRate = 5
 
+// ServerUpdateRate is the amount of times a client
+// reports its state to the server every second
+const ServerUpdateRate = 0.5
+
 // A Game stores all the components of the game,
 // to abstract the game data/logic from the main
 // loop.
@@ -26,6 +30,7 @@ type Game struct {
 
 	ld         *loader.Loader
 	nextTick   float64
+	nextUpdate float64
 	shouldQuit bool
 }
 
@@ -35,6 +40,7 @@ func New(ld *loader.Loader, addr, name string) *Game {
 		World:      &world.World{},
 		ViewOffset: &geom.Vector{X: 0, Y: 0},
 		nextTick:   1.0 / TickRate,
+		nextUpdate: 1.0 / ServerUpdateRate,
 		ld:         ld,
 		shouldQuit: false,
 		Players:    make(map[uuid.UUID]*entity.Ship),
@@ -67,10 +73,16 @@ func (g *Game) Update(dt float64) string {
 	}
 
 	g.nextTick -= dt
+	g.nextUpdate -= dt
 
 	if g.nextTick <= 0 {
 		g.nextTick = 1.0 / TickRate
 		g.tick()
+	}
+
+	if g.nextUpdate <= 0 {
+		g.nextUpdate = 1.0 / ServerUpdateRate
+		g.serverUpdate()
 	}
 
 	for _, e := range g.Entities {
@@ -169,6 +181,12 @@ func (g *Game) tick() {
 	for _, e := range g.Entities {
 		e.Step()
 	}
+}
+
+func (g *Game) serverUpdate() {
+	g.Client.Send(&message.StateUpdate{
+		Position: g.Player.Pos,
+	})
 }
 
 func lerp(a, b, t float64) float64 {

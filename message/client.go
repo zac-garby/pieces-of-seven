@@ -20,3 +20,11 @@ type Disconnect struct{}
 type Moved struct {
 	Position geom.Coord
 }
+
+// A StateUpdate is sent peridocally from
+// the client to the server to inform it
+// of state changes, to ensure it's synced
+// properly.
+type StateUpdate struct {
+	Position geom.Coord
+}

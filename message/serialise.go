@@ -28,6 +28,8 @@ func Serialize(msg interface{}) ([]byte, error) {
 		prefix = 'm'
 	case *Disconnect, Disconnect:
 		prefix = 'x'
+	case *StateUpdate, StateUpdate:
+		prefix = 's'
 
 	default:
 		return []byte{}, fmt.Errorf("invalid message type: %s", reflect.TypeOf(msg).String())
@@ -65,6 +67,8 @@ func Deserialize(data []byte) (interface{}, error) {
 		template = &Moved{}
 	case 'x':
 		template = &Disconnect{}
+	case 's':
+		template = &StateUpdate{}
 
 	default:
 		return nil, fmt.Errorf("invalid message prefix: %s", string(data[0]))

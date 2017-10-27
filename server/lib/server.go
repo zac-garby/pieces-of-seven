@@ -179,6 +179,9 @@ func (s *Server) handleMessage(id uuid.UUID, msg interface{}) {
 		if err != nil {
 			fmt.Println(err)
 		}
+
+	case *message.StateUpdate:
+		s.Players[id].Pos = m.Position
 	}
 }
 

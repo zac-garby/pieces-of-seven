@@ -93,10 +93,6 @@ func (s *Ship) Update(dt float64) {
 	if dist < 0.1 {
 		s.Path = s.Path[1:]
 
-		if len(s.Path) > 0 {
-
-		}
-
 		s.Pos = NeXTStep
 
 		s.ApparentPos.X = float64(s.Pos.X)
