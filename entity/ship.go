@@ -17,7 +17,7 @@ const ShipSpeed = 20
 type Ship struct {
 	Pos         geom.Coord  // The actual position
 	Name        string      // The ship's name
-	apparentPos geom.Vector // The interpolated position, for rendering
+	ApparentPos geom.Vector // The interpolated position, for rendering
 
 	// 0 1 2
 	// 7 x 3
@@ -32,7 +32,7 @@ type Ship struct {
 func NewShip(x, y uint) *Ship {
 	return &Ship{
 		Pos:         geom.Coord{X: x, Y: y},
-		apparentPos: geom.Vector{X: float64(x), Y: float64(y)},
+		ApparentPos: geom.Vector{X: float64(x), Y: float64(y)},
 	}
 }
 
@@ -61,8 +61,8 @@ func (s *Ship) Render(viewOffset *geom.Vector, ld *loader.Loader, rend *sdl.Rend
 	src := s.getSheetRect()
 
 	dst := &sdl.Rect{
-		X: int32(s.apparentPos.X*world.TileSize) - int32(viewOffset.X),
-		Y: int32(s.apparentPos.Y*world.TileSize) - int32(viewOffset.Y),
+		X: int32(s.ApparentPos.X*world.TileSize) - int32(viewOffset.X),
+		Y: int32(s.ApparentPos.Y*world.TileSize) - int32(viewOffset.Y),
 		W: int32(world.TileSize),
 		H: int32(world.TileSize),
 	}
@@ -84,8 +84,8 @@ func (s *Ship) Update(dt float64) {
 	NeXTStep := s.Path[0]
 
 	diff := geom.Vector{
-		X: float64(NeXTStep.X) - float64(s.apparentPos.X),
-		Y: float64(NeXTStep.Y) - float64(s.apparentPos.Y),
+		X: float64(NeXTStep.X) - float64(s.ApparentPos.X),
+		Y: float64(NeXTStep.Y) - float64(s.ApparentPos.Y),
 	}
 
 	dist := math.Sqrt(diff.X*diff.X + diff.Y*diff.Y)
@@ -99,21 +99,21 @@ func (s *Ship) Update(dt float64) {
 
 		s.Pos = NeXTStep
 
-		s.apparentPos.X = float64(s.Pos.X)
-		s.apparentPos.Y = float64(s.Pos.Y)
+		s.ApparentPos.X = float64(s.Pos.X)
+		s.ApparentPos.Y = float64(s.Pos.Y)
 	} else {
 		movement := geom.Vector{
 			X: diff.X / dist / ShipSpeed,
 			Y: diff.Y / dist / ShipSpeed,
 		}
 
-		s.apparentPos.X += movement.X
-		s.apparentPos.Y += movement.Y
+		s.ApparentPos.X += movement.X
+		s.ApparentPos.Y += movement.Y
 	}
 
 	d := geom.Vector{
-		X: float64(s.apparentPos.X) - float64(s.Pos.X),
-		Y: float64(s.apparentPos.Y) - float64(s.Pos.Y),
+		X: float64(s.ApparentPos.X) - float64(s.Pos.X),
+		Y: float64(s.ApparentPos.Y) - float64(s.Pos.Y),
 	}
 
 	s.direction = s.diffToDirection(d)

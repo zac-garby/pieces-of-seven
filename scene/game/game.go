@@ -88,6 +88,11 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 	for _, e := range g.Entities {
 		e.Render(g.ViewOffset, g.ld, rend)
 	}
+
+	if g.Player != nil {
+		g.ViewOffset.X = float64(g.Player.ApparentPos.X*world.TileSize) - float64(width/2)
+		g.ViewOffset.Y = float64(g.Player.ApparentPos.Y*world.TileSize) - float64(height/2)
+	}
 }
 
 // HandleEvent handles a window event, such as a mouse
