@@ -144,7 +144,7 @@ func (w *World) getRectsOfType(t Tile, viewOffset *geom.Vector, width, height in
 	// Calculate the amount of visible tiles, with some
 	// padding on the side just in case
 	tilesWide := width/TileSize + 2
-	tilesHigh := height/TileSize + 2
+	tilesHigh := height/TileSize + 3
 	startX := int(viewOffset.X)/TileSize - 1
 	startY := int(viewOffset.Y)/TileSize - 1
 
