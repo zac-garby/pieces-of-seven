@@ -102,39 +102,52 @@ func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, hei
 	)
 
 	for _, msg := range msgs {
-		solid, err := font.RenderUTF8_Blended_Wrapped(msg.Content, sdl.Color{R: 255, G: 255, B: 255, A: 255}, width-20)
+		user, err := font.RenderUTF8_Solid(msg.Sender, sdl.Color{R: 255, G: 255, B: 255, A: 255})
 		if err != nil {
 			panic(err)
 		}
 
-		tex, err := rend.CreateTextureFromSurface(solid)
+		utex, err := rend.CreateTextureFromSurface(user)
+		if err != nil {
+			panic(err)
+		}
+
+		content, err := font.RenderUTF8_Blended_Wrapped(msg.Content, sdl.Color{R: 200, G: 200, B: 200, A: 255}, width-20)
+		if err != nil {
+			panic(err)
+		}
+
+		ctex, err := rend.CreateTextureFromSurface(content)
 		if err != nil {
 			panic(err)
 		}
 
 		var (
-			src = &solid.ClipRect
+			csrc = &content.ClipRect
 
-			dest = &sdl.Rect{
+			cdest = &sdl.Rect{
 				X: int32(nextPos.X),
-				Y: int32(uint(height) - nextPos.Y - uint(src.H)),
-				W: src.W,
-				H: src.H,
-			}
-
-			separator = &sdl.Rect{
-				X: int32(nextPos.X),
-				Y: int32(uint(height) - nextPos.Y),
-				W: int32(width - 20),
-				H: 1,
+				Y: int32(uint(height) - nextPos.Y - uint(csrc.H)),
+				W: csrc.W,
+				H: csrc.H,
 			}
 		)
 
-		rend.Copy(tex, src, dest)
+		rend.Copy(ctex, csrc, cdest)
+		nextPos.Y += uint(csrc.H + 3)
 
-		rend.SetDrawColor(50, 50, 50, 255)
-		rend.FillRect(separator)
+		var (
+			usrc = &user.ClipRect
 
-		nextPos.Y += uint(src.H + 10)
+			udest = &sdl.Rect{
+				X: int32(nextPos.X),
+				Y: int32(uint(height) - nextPos.Y - uint(usrc.H)),
+				W: usrc.W,
+				H: usrc.H,
+			}
+		)
+
+		rend.Copy(utex, usrc, udest)
+		nextPos.Y += uint(usrc.H + 10)
 	}
 }
