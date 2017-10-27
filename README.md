@@ -4,9 +4,9 @@ Pieces of Seven (or p7) is a multiplayer open world game written in Go, using SD
 of two parts, the *server* and the *client*. The server is intended to be used as its own
 program, despite existing in the same codebase as the game/client.
 
-It's in early development (at the time of writing I've only been working on it for a couple of
-days) so it's definitely not stable, and it's not really much of a game yet. However, it still
-has working multiplayer support, and click-to-move with pathfinding.
+It's in early development so it's definitely not stable, and it's not really much of a game yet.
+However, it still has working multiplayer support, procedural world generation, and click-to-move
+controls with pathfinding.
 
 ![](assets/screenshot.png)
 
