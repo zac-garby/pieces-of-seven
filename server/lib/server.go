@@ -6,7 +6,6 @@ import (
 	"net"
 
 	"github.com/Zac-Garby/pieces-of-seven/entity"
-	"github.com/Zac-Garby/pieces-of-seven/geom"
 	"github.com/Zac-Garby/pieces-of-seven/message"
 	"github.com/Zac-Garby/pieces-of-seven/world"
 	"github.com/satori/go.uuid"
@@ -26,15 +25,14 @@ type Server struct {
 
 func New(addr string) *Server {
 	s := &Server{
-		World:       world.New(),
+		World:       world.Generate(),
 		Address:     addr,
 		Players:     make(map[uuid.UUID]*entity.Ship),
 		connections: make(map[uuid.UUID]net.Conn),
 		closed:      make(map[uuid.UUID]bool),
 	}
 
-	s.World.Tiles[3][8] = world.Land
-	s.World.Tiles[3][9] = world.Land
+	s.World.MakeGraph()
 
 	return s
 }
@@ -61,8 +59,10 @@ func (s *Server) handleConnection(conn net.Conn) {
 	id := uuid.NewV4()
 	s.connections[id] = conn
 
+	pos := s.World.FindFreeSpace()
+
 	// Create a new Ship for the connected player
-	player := entity.NewShip(10, 5)
+	player := entity.NewShip(pos.X, pos.Y)
 	s.Players[id] = player
 
 	if err := s.Send(id, &message.GameInfo{
@@ -144,12 +144,8 @@ func (s *Server) Broadcast(msg interface{}) error {
 func (s *Server) handleMessage(id uuid.UUID, msg interface{}) {
 	switch m := msg.(type) {
 	case *message.ClientInfo:
-		pos := geom.Coord{X: 10, Y: 5}
-
-		s.Players[id] = &entity.Ship{
-			Name: m.Name,
-			Pos:  pos,
-		}
+		pos := s.Players[id].Pos
+		s.Players[id].Name = m.Name
 
 		err := s.Broadcast(&message.NewPlayer{
 			ID: id,

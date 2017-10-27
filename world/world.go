@@ -1,6 +1,10 @@
 package world
 
 import (
+	"math/rand"
+
+	"time"
+
 	"github.com/Zac-Garby/pieces-of-seven/geom"
 	"github.com/Zac-Garby/pieces-of-seven/loader"
 	"github.com/veandco/go-sdl2/sdl"
@@ -25,17 +29,6 @@ type World struct {
 // New creates a new World instance.
 func New() *World {
 	world := &World{}
-
-	world.Tiles[5][5] = 1
-	world.Tiles[6][6] = 1
-	world.Tiles[7][7] = 1
-	world.Tiles[8][8] = 1
-	world.Tiles[9][9] = 1
-	world.Tiles[10][10] = 1
-	world.Tiles[5][6] = 1
-	world.Tiles[5][7] = 1
-	world.Tiles[6][8] = 1
-
 	world.MakeGraph()
 
 	return world
@@ -203,6 +196,23 @@ func (w *World) MakeGraph() {
 			}
 
 			w.Graph[y][x] = node
+		}
+	}
+}
+
+// FindFreeSpace finds a random coordinate in the world
+// in which there is no unpassable tile.
+func (w *World) FindFreeSpace() geom.Coord {
+	rand.Seed(int64(time.Now().Nanosecond()))
+
+	for {
+		coord := geom.Coord{
+			X: uint(rand.Int() % (Width - 1)),
+			Y: uint(rand.Int() % (Height - 1)),
+		}
+
+		if w.Tiles[coord.Y][coord.X].GetData().Passable {
+			return coord
 		}
 	}
 }
