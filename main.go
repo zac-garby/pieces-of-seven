@@ -42,7 +42,7 @@ func main() {
 		"sand":  {Path: "assets/tiles/sand.png", Type: loader.Texture, Data: make(map[string]int)},
 
 		// Fonts
-		"body": {Path: "assets/fonts/PIXEARG_.ttf", Type: loader.Font, Data: map[string]int{"size": 20}},
+		"body": {Path: "assets/fonts/alagard.ttf", Type: loader.Font, Data: map[string]int{"size": 25}},
 	})
 
 	ld.Load(renderer)
