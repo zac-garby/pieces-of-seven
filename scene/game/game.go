@@ -194,9 +194,11 @@ func (g *Game) tick() {
 }
 
 func (g *Game) serverUpdate() {
-	g.Client.Send(&message.StateUpdate{
-		Position: g.Player.Pos,
-	})
+	if g.Player != nil {
+		g.Client.Send(&message.StateUpdate{
+			Position: g.Player.Pos,
+		})
+	}
 }
 
 func lerp(a, b, t float64) float64 {

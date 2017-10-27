@@ -46,7 +46,7 @@ func (s *Server) Listen() error {
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			return err
+			fmt.Println(err)
 		}
 
 		go s.handleConnection(conn)

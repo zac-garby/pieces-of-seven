@@ -29,5 +29,5 @@ func main() {
 	fmt.Println("listening on", addr)
 
 	server := lib.New(addr)
-	server.Listen()
+	fmt.Println(server.Listen())
 }
