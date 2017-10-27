@@ -111,15 +111,20 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 	}
 
 	if g.Player != nil {
+		ppos := geom.Vector{
+			X: (g.Player.ApparentPos.X * world.TileSize) + (ChatLogWidth / 2),
+			Y: g.Player.ApparentPos.Y * world.TileSize,
+		}
+
 		if g.shouldSetCam {
-			g.ViewOffset.X = float64(g.Player.ApparentPos.X*world.TileSize) - float64(width/2)
-			g.ViewOffset.Y = float64(g.Player.ApparentPos.Y*world.TileSize) - float64(height/2)
+			g.ViewOffset.X = float64(ppos.X) - float64(width/2)
+			g.ViewOffset.Y = float64(ppos.Y) - float64(height/2)
 
 			g.shouldSetCam = false
 
 		} else {
-			g.ViewOffset.X = lerp(g.ViewOffset.X, float64(g.Player.ApparentPos.X*world.TileSize)-float64(width/2), 0.01)
-			g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(g.Player.ApparentPos.Y*world.TileSize)-float64(height/2), 0.01)
+			g.ViewOffset.X = lerp(g.ViewOffset.X, float64(ppos.X)-float64(width/2), 0.01)
+			g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(ppos.Y)-float64(height/2), 0.01)
 		}
 
 		if g.ViewOffset.X < 0 {
