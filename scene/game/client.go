@@ -125,8 +125,10 @@ func (c *Client) handleMessage(msg interface{}) {
 
 		ship.Move(m.Player.Destination, c.Game.World)
 
-		c.Game.Players[m.ID] = ship
-		c.Game.Entities = append(c.Game.Entities, ship)
+		if _, exists := c.Game.Players[m.ID]; !exists {
+			c.Game.Players[m.ID] = ship
+			c.Game.Entities = append(c.Game.Entities, ship)
+		}
 
 	case *message.PlayerLeft:
 		for i, ent := range c.Game.Entities {
