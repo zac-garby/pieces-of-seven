@@ -28,22 +28,24 @@ type Game struct {
 	ViewOffset *geom.Vector
 	Client     *Client
 
-	ld         *loader.Loader
-	nextTick   float64
-	nextUpdate float64
-	shouldQuit bool
+	ld           *loader.Loader
+	nextTick     float64
+	nextUpdate   float64
+	shouldQuit   bool
+	shouldSetCam bool
 }
 
 // New creates a new Game instance.
 func New(ld *loader.Loader, addr, name string) *Game {
 	game := &Game{
-		World:      &world.World{},
-		ViewOffset: &geom.Vector{X: 0, Y: 0},
-		nextTick:   1.0 / TickRate,
-		nextUpdate: 1.0 / ServerUpdateRate,
-		ld:         ld,
-		shouldQuit: false,
-		Players:    make(map[uuid.UUID]*entity.Ship),
+		World:        &world.World{},
+		ViewOffset:   &geom.Vector{X: 0, Y: 0},
+		nextTick:     1.0 / TickRate,
+		nextUpdate:   1.0 / ServerUpdateRate,
+		ld:           ld,
+		shouldQuit:   false,
+		shouldSetCam: true,
+		Players:      make(map[uuid.UUID]*entity.Ship),
 	}
 
 	game.Client = NewClient(addr, game, name)
@@ -102,8 +104,16 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 	}
 
 	if g.Player != nil {
-		g.ViewOffset.X = lerp(g.ViewOffset.X, float64(g.Player.ApparentPos.X*world.TileSize)-float64(width/2), 0.01)
-		g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(g.Player.ApparentPos.Y*world.TileSize)-float64(height/2), 0.01)
+		if g.shouldSetCam {
+			g.ViewOffset.X = float64(g.Player.ApparentPos.X*world.TileSize) - float64(width/2)
+			g.ViewOffset.Y = float64(g.Player.ApparentPos.Y*world.TileSize) - float64(height/2)
+
+			g.shouldSetCam = false
+
+		} else {
+			g.ViewOffset.X = lerp(g.ViewOffset.X, float64(g.Player.ApparentPos.X*world.TileSize)-float64(width/2), 0.01)
+			g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(g.Player.ApparentPos.Y*world.TileSize)-float64(height/2), 0.01)
+		}
 
 		if g.ViewOffset.X < 0 {
 			g.ViewOffset.X = 0
