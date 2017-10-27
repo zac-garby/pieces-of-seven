@@ -1,6 +1,12 @@
 package game
 
-import "time"
+import (
+	"time"
+
+	"github.com/Zac-Garby/pieces-of-seven/geom"
+	"github.com/Zac-Garby/pieces-of-seven/loader"
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 type MessageType int
 
@@ -38,6 +44,22 @@ type ChatLog struct {
 // NewChatLog creates a new ChatLog
 func NewChatLog() *ChatLog {
 	return &ChatLog{
+		Messages: []*Message{
+			{
+				Sender:  "server",
+				Content: "hello, world",
+				Type:    ServerMessage,
+				Time:    time.Now(),
+			},
+
+			{
+				Sender:  "server",
+				Content: "hello, world. hello, world. hello, world. hello, world. hello, world. hello, world. hello, world.",
+				Type:    ServerMessage,
+				Time:    time.Now(),
+			},
+		},
+
 		Mask: DefaultMessageMask,
 	}
 }
@@ -59,4 +81,49 @@ func (c *ChatLog) GetVisible() []*Message {
 	}
 
 	return visible
+}
+
+// Render renders a chat log on an SDL renderer.
+func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, height int) {
+	bg := &sdl.Rect{
+		X: int32(x),
+		Y: int32(y),
+		W: int32(width),
+		H: int32(height),
+	}
+
+	rend.SetDrawColor(0, 0, 0, 255)
+	rend.FillRect(bg)
+
+	var (
+		font    = ld.Fonts["body-sm"]
+		msgs    = c.GetVisible()
+		nextPos = geom.Coord{uint(x + 10), uint(y + 10)}
+	)
+
+	for _, msg := range msgs {
+		solid, err := font.RenderUTF8_Blended_Wrapped(msg.Content, sdl.Color{R: 255, G: 255, B: 255, A: 255}, width-20)
+		if err != nil {
+			panic(err)
+		}
+
+		tex, err := rend.CreateTextureFromSurface(solid)
+		if err != nil {
+			panic(err)
+		}
+
+		var (
+			src = &solid.ClipRect
+
+			dest = &sdl.Rect{
+				X: int32(nextPos.X),
+				Y: int32(uint(height) - nextPos.Y - uint(src.H)),
+				W: src.W,
+				H: src.H,
+			}
+		)
+
+		rend.Copy(tex, src, dest)
+		nextPos.Y += uint(src.H + 10)
+	}
 }

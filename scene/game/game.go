@@ -17,6 +17,11 @@ const TickRate = 5
 // reports its state to the server every second
 const ServerUpdateRate = 0.5
 
+// ChatLogWidth is the width of the chat log,
+// which is positioned to the side of the screen,
+// in pixels.
+const ChatLogWidth = 400
+
 // A Game stores all the components of the game,
 // to abstract the game data/logic from the main
 // loop.
@@ -99,7 +104,7 @@ func (g *Game) Update(dt float64) string {
 // Render renders a game (i.e. the objects inside it)
 // onto an SDL renderer.
 func (g *Game) Render(rend *sdl.Renderer, width, height int) {
-	g.World.Render(rend, g.ld, g.ViewOffset, width, height)
+	g.World.Render(rend, g.ld, g.ViewOffset, width-ChatLogWidth, height)
 
 	for _, e := range g.Entities {
 		e.Render(g.ViewOffset, g.ld, rend)
@@ -133,6 +138,8 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 			g.ViewOffset.Y = float64(world.Height*world.TileSize - height)
 		}
 	}
+
+	g.ChatLog.Render(rend, g.ld, width-ChatLogWidth, 0, ChatLogWidth, height)
 }
 
 // HandleEvent handles a window event, such as a mouse
