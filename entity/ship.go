@@ -61,8 +61,8 @@ func (s *Ship) Render(viewOffset *geom.Vector, ld *loader.Loader, rend *sdl.Rend
 	src := s.getSheetRect()
 
 	dst := &sdl.Rect{
-		X: int32(s.apparentPos.X * world.TileSize),
-		Y: int32(s.apparentPos.Y * world.TileSize),
+		X: int32(s.apparentPos.X*world.TileSize) - int32(viewOffset.X),
+		Y: int32(s.apparentPos.Y*world.TileSize) - int32(viewOffset.Y),
 		W: int32(world.TileSize),
 		H: int32(world.TileSize),
 	}
