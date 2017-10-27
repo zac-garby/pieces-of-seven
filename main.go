@@ -53,7 +53,7 @@ func main() {
 	window.SetIcon(ld.Surfaces["icon"])
 
 	// Set the window title to Game
-	window.SetTitle("Game")
+	window.SetTitle("Pieces of Seven")
 
 	// Ensure the window has focus
 	window.Raise()
