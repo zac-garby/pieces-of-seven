@@ -27,6 +27,7 @@ type Game struct {
 	Player     *entity.Ship
 	ViewOffset *geom.Vector
 	Client     *Client
+	ChatLog    *ChatLog
 
 	ld           *loader.Loader
 	nextTick     float64
@@ -40,6 +41,7 @@ func New(ld *loader.Loader, addr, name string) *Game {
 	game := &Game{
 		World:        &world.World{},
 		ViewOffset:   &geom.Vector{X: 0, Y: 0},
+		ChatLog:      NewChatLog(),
 		nextTick:     1.0 / TickRate,
 		nextUpdate:   1.0 / ServerUpdateRate,
 		ld:           ld,
