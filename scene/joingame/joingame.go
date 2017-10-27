@@ -37,6 +37,8 @@ func New(ld *loader.Loader) *JoinGame {
 		ui.CenterAlign,
 	))
 
+	join.inter.Add("space1", ui.NewText(" ", 0, 0, 0, ld.Fonts["body"], ui.LeftAlign))
+
 	join.inter.Add("addr-prompt", ui.NewText(
 		"Enter an IP to connect to:",
 		255, 255, 255,
@@ -50,7 +52,7 @@ func New(ld *loader.Loader) *JoinGame {
 		ui.CenterAlign,
 	))
 
-	join.inter.Add("space", ui.NewText(" ", 0, 0, 0, ld.Fonts["body"], ui.LeftAlign))
+	join.inter.Add("space2", ui.NewText(" ", 0, 0, 0, ld.Fonts["body"], ui.LeftAlign))
 
 	join.inter.Add("return-prompt", ui.NewText(
 		"Press [RETURN] once you're done.",
