@@ -18,15 +18,17 @@ var ErrNoConnection = errors.New("no connection established")
 
 type Client struct {
 	Address string
+	Name    string
 	Game    *Game
 
 	conn net.Conn
 }
 
-func NewClient(addr string, game *Game) *Client {
+func NewClient(addr string, game *Game, name string) *Client {
 	c := &Client{
 		Address: addr,
 		Game:    game,
+		Name:    name,
 	}
 
 	return c
@@ -158,7 +160,7 @@ func (c *Client) handleMessage(msg interface{}) {
 
 func (c *Client) SendClientInfo() error {
 	info := &message.ClientInfo{
-		Name: "name",
+		Name: c.Name,
 	}
 
 	return c.Send(info)

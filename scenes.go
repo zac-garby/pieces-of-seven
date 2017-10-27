@@ -11,11 +11,11 @@ import (
 )
 
 func makeScene(name string, ld *loader.Loader) scene.Scene {
-	split := strings.Split(name, " ")
+	split := strings.Split(name, "\n")
 
 	switch split[0] {
 	case "join":
-		return game.New(ld, split[1])
+		return game.New(ld, split[1], split[2])
 	case "mainmenu":
 		return mainmenu.New(ld)
 	case "joingame":

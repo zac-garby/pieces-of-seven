@@ -30,7 +30,7 @@ type Game struct {
 }
 
 // New creates a new Game instance.
-func New(ld *loader.Loader, addr string) *Game {
+func New(ld *loader.Loader, addr, name string) *Game {
 	game := &Game{
 		World:      &world.World{},
 		ViewOffset: &geom.Vector{X: 0, Y: 0},
@@ -40,7 +40,7 @@ func New(ld *loader.Loader, addr string) *Game {
 		Players:    make(map[uuid.UUID]*entity.Ship),
 	}
 
-	game.Client = NewClient(addr, game)
+	game.Client = NewClient(addr, game, name)
 
 	return game
 }

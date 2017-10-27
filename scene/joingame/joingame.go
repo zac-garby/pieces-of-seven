@@ -1,6 +1,8 @@
 package joingame
 
 import (
+	"strings"
+
 	"github.com/Zac-Garby/pieces-of-seven/loader"
 	"github.com/Zac-Garby/pieces-of-seven/ui"
 	"github.com/veandco/go-sdl2/sdl"
@@ -22,17 +24,39 @@ func New(ld *loader.Loader) *JoinGame {
 		},
 	}
 
-	join.inter.Add("text", ui.NewText(
+	join.inter.Add("name-prompt", ui.NewText(
+		"What's your name?",
+		255, 255, 255,
+		ld.Fonts["body"],
+		ui.LeftAlign,
+	))
+
+	join.inter.Add("name", ui.NewTextfield(
+		"unnamed",
+		ld.Fonts["body"],
+		ui.CenterAlign,
+	))
+
+	join.inter.Add("addr-prompt", ui.NewText(
 		"Enter an IP to connect to:",
 		255, 255, 255,
 		ld.Fonts["body"],
-		ui.CenterAlign,
+		ui.LeftAlign,
 	))
 
 	join.inter.Add("addr", ui.NewTextfield(
 		"127.0.0.1:12358",
 		ld.Fonts["body"],
 		ui.CenterAlign,
+	))
+
+	join.inter.Add("space", ui.NewText(" ", 0, 0, 0, ld.Fonts["body"], ui.LeftAlign))
+
+	join.inter.Add("return-prompt", ui.NewText(
+		"Press [RETURN] once you're done.",
+		255, 255, 255,
+		ld.Fonts["body"],
+		ui.RightAlign,
 	))
 
 	join.inter.Layout(300, 100, 600, 40)
@@ -67,13 +91,21 @@ func (j *JoinGame) HandleEvent(event sdl.Event) string {
 		case sdl.K_RETURN:
 			addr, _ := j.inter.Get("addr")
 			field := addr.(*ui.Textfield)
-			ip := field.Text
+			ip := strings.TrimSpace(field.Text)
+
+			nameField, _ := j.inter.Get("name")
+			field = nameField.(*ui.Textfield)
+			name := strings.TrimSpace(field.Text)
 
 			if len(ip) == 0 {
 				ip = "localhost:12358"
 			}
 
-			return "join " + ip
+			if len(name) == 0 {
+				name = "unnamed"
+			}
+
+			return "join\n" + ip + "\n" + name
 		}
 
 	default:
