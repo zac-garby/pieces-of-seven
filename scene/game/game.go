@@ -92,6 +92,22 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 	if g.Player != nil {
 		g.ViewOffset.X = lerp(g.ViewOffset.X, float64(g.Player.ApparentPos.X*world.TileSize)-float64(width/2), 0.01)
 		g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(g.Player.ApparentPos.Y*world.TileSize)-float64(height/2), 0.01)
+
+		if g.ViewOffset.X < 0 {
+			g.ViewOffset.X = 0
+		}
+
+		if g.ViewOffset.Y < 0 {
+			g.ViewOffset.Y = 0
+		}
+
+		if g.ViewOffset.X+float64(width) > world.Width*world.TileSize {
+			g.ViewOffset.X = float64(world.Width*world.TileSize - width)
+		}
+
+		if g.ViewOffset.Y+float64(height) > world.Height*world.TileSize {
+			g.ViewOffset.Y = float64(world.Height*world.TileSize - height)
+		}
 	}
 }
 
