@@ -197,6 +197,7 @@ func (g *Game) HandleEvent(event sdl.Event) string {
 				Content: g.ChatLog.Input,
 				Sender:  g.Player.Name,
 				Time:    time.Now(),
+				Type:    GlobalMessage,
 			})
 
 			g.ChatLog.Input = ""

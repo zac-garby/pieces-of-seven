@@ -39,4 +39,5 @@ type ChatMessage struct {
 	Sender  string
 	Content string
 	Time    time.Time
+	Type    int
 }
