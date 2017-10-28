@@ -46,22 +46,6 @@ type ChatLog struct {
 // NewChatLog creates a new ChatLog
 func NewChatLog() *ChatLog {
 	return &ChatLog{
-		Messages: []*Message{
-			{
-				Sender:  "server",
-				Content: "hello, world",
-				Type:    ServerMessage,
-				Time:    time.Now(),
-			},
-
-			{
-				Sender:  "server",
-				Content: "hello, world. hello, world. hello, world. hello, world. testing wrapping. hello, world. hello, world. hello, world.",
-				Type:    ServerMessage,
-				Time:    time.Now(),
-			},
-		},
-
 		Input: "",
 		Mask:  DefaultMessageMask,
 	}
