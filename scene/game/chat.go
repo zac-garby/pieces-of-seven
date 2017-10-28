@@ -1,6 +1,7 @@
 package game
 
 import (
+	"math"
 	"time"
 
 	"github.com/Zac-Garby/pieces-of-seven/geom"
@@ -113,7 +114,8 @@ func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, hei
 	rend.Copy(itex, isrc, idest)
 	nextPos := geom.Coord{X: uint(x + 10), Y: uint(y + 10 + int(isrc.H))}
 
-	for _, msg := range msgs {
+	for i := len(msgs) - 1; i >= int(math.Max(0, float64(len(msgs)-15))); i-- {
+		msg := msgs[i]
 		user, utex := renderText(msg.Sender, font, sdl.Color{R: 255, G: 255, B: 255, A: 255}, rend, -1)
 		content, ctex := renderText(msg.Content, font, sdl.Color{R: 200, G: 200, B: 200, A: 200}, rend, width-20)
 
