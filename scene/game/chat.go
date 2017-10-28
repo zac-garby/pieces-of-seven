@@ -103,7 +103,7 @@ func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, hei
 		msgs = c.GetVisible()
 	)
 
-	input, itex := renderText("> "+c.Input, font, sdl.Color{R: 30, G: 30, B: 30, A: 255}, rend, width-20)
+	input, itex := renderText(c.Input+"|", font, sdl.Color{R: 30, G: 30, B: 30, A: 255}, rend, width-20)
 
 	var (
 		isrc = &input.ClipRect
