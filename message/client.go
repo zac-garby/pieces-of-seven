@@ -1,6 +1,10 @@
 package message
 
-import "github.com/Zac-Garby/pieces-of-seven/geom"
+import (
+	"time"
+
+	"github.com/Zac-Garby/pieces-of-seven/geom"
+)
 
 // This file contains messages sent from
 // the client to the server.
@@ -27,4 +31,13 @@ type Moved struct {
 // properly.
 type StateUpdate struct {
 	Position geom.Coord
+}
+
+// A ChatMessage tells the server that the
+// client has sent a message.
+type ChatMessage struct {
+	Sender  string
+	Content string
+	Time    time.Time
+	Type    int
 }

@@ -119,6 +119,8 @@ func (c *Client) handleMessage(msg interface{}) {
 			c.Game.Players[id] = ship
 		}
 
+		c.Game.Player.Name = c.Name
+
 	case *message.NewPlayer:
 		ship := entity.NewShip(
 			m.Player.Position.X,
@@ -147,6 +149,14 @@ func (c *Client) handleMessage(msg interface{}) {
 
 	case *message.PlayerMoved:
 		c.Game.Players[m.ID].Move(m.Position, c.Game.World)
+
+	case *message.ChatMessage:
+		c.Game.ChatLog.Messages = append(c.Game.ChatLog.Messages, &Message{
+			Content: m.Content,
+			Sender:  m.Sender,
+			Time:    m.Time,
+			Type:    GlobalMessage,
+		})
 	}
 }
 

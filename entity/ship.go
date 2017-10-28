@@ -39,7 +39,13 @@ func NewShip(x, y uint) *Ship {
 // Move sets the ship's current movement path
 // to one going to (x, y).
 func (s *Ship) Move(to geom.Coord, in *world.World) {
-	coords, found := in.Graph.FindPath(s.Pos, to)
+	start := s.Pos
+
+	if len(s.Path) > 0 {
+		start = s.Path[0]
+	}
+
+	coords, found := in.Graph.FindPath(start, to)
 	if !found {
 		return
 	}

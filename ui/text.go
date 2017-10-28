@@ -79,10 +79,10 @@ func (t *Text) Render(rend *sdl.Renderer) {
 	// Draw the texture
 	rend.Copy(tex,
 		&sdl.Rect{
-			0,
-			0,
-			t.Rect.W,
-			t.Rect.H,
+			X: 0,
+			Y: 0,
+			W: t.Rect.W,
+			H: t.Rect.H,
 		},
 
 		&sdl.Rect{

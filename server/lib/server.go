@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net"
 
+	"time"
+
 	"github.com/Zac-Garby/pieces-of-seven/entity"
 	"github.com/Zac-Garby/pieces-of-seven/message"
+	"github.com/Zac-Garby/pieces-of-seven/scene/game"
 	"github.com/Zac-Garby/pieces-of-seven/world"
 	"github.com/satori/go.uuid"
 )
@@ -51,8 +54,6 @@ func (s *Server) Listen() error {
 
 		go s.handleConnection(conn)
 	}
-
-	return nil
 }
 
 func (s *Server) handleConnection(conn net.Conn) {
@@ -161,6 +162,13 @@ func (s *Server) handleMessage(id uuid.UUID, msg interface{}) {
 
 		fmt.Printf("%s joined the game\n", m.Name)
 
+		s.Broadcast(&message.ChatMessage{
+			Time:    time.Now(),
+			Sender:  "server",
+			Content: fmt.Sprintf("%s joined the game\n", m.Name),
+			Type:    game.ServerMessage,
+		})
+
 	case *message.Disconnect:
 		s.handleDisconnect(id)
 
@@ -178,6 +186,11 @@ func (s *Server) handleMessage(id uuid.UUID, msg interface{}) {
 
 	case *message.StateUpdate:
 		s.Players[id].Pos = m.Position
+
+	case *message.ChatMessage:
+		fmt.Printf("%s: %s\n", m.Sender, m.Content)
+
+		s.Broadcast(m)
 	}
 }
 
@@ -197,6 +210,13 @@ func (s *Server) handleDisconnect(id uuid.UUID) {
 	}
 
 	fmt.Printf("%s left the game\n", s.Players[id].Name)
+
+	s.Broadcast(&message.ChatMessage{
+		Time:    time.Now(),
+		Sender:  "server",
+		Content: fmt.Sprintf("%s left the game\n", s.Players[id].Name),
+		Type:    game.ServerMessage,
+	})
 
 	// Close the connection and delete the player
 	s.connections[id].Close()

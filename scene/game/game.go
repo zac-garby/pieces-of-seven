@@ -1,6 +1,8 @@
 package game
 
 import (
+	"time"
+
 	"github.com/Zac-Garby/pieces-of-seven/entity"
 	"github.com/Zac-Garby/pieces-of-seven/geom"
 	"github.com/Zac-Garby/pieces-of-seven/loader"
@@ -17,6 +19,11 @@ const TickRate = 5
 // reports its state to the server every second
 const ServerUpdateRate = 0.5
 
+// ChatLogWidth is the width of the chat log,
+// which is positioned to the side of the screen,
+// in pixels.
+const ChatLogWidth = 400
+
 // A Game stores all the components of the game,
 // to abstract the game data/logic from the main
 // loop.
@@ -27,6 +34,7 @@ type Game struct {
 	Player     *entity.Ship
 	ViewOffset *geom.Vector
 	Client     *Client
+	ChatLog    *ChatLog
 
 	ld           *loader.Loader
 	nextTick     float64
@@ -40,6 +48,7 @@ func New(ld *loader.Loader, addr, name string) *Game {
 	game := &Game{
 		World:        &world.World{},
 		ViewOffset:   &geom.Vector{X: 0, Y: 0},
+		ChatLog:      NewChatLog(),
 		nextTick:     1.0 / TickRate,
 		nextUpdate:   1.0 / ServerUpdateRate,
 		ld:           ld,
@@ -56,6 +65,8 @@ func New(ld *loader.Loader, addr, name string) *Game {
 // Enter is called when a Game scene is entered.
 func (g *Game) Enter() {
 	go g.Client.Listen()
+
+	sdl.StartTextInput()
 }
 
 // Exit is called when a Game scene is exited.
@@ -63,6 +74,8 @@ func (g *Game) Exit() {
 	if !g.shouldQuit {
 		g.Client.LeaveGame()
 	}
+
+	sdl.StopTextInput()
 }
 
 // Update updates the game by 'dt' seconds. The returned
@@ -97,22 +110,27 @@ func (g *Game) Update(dt float64) string {
 // Render renders a game (i.e. the objects inside it)
 // onto an SDL renderer.
 func (g *Game) Render(rend *sdl.Renderer, width, height int) {
-	g.World.Render(rend, g.ld, g.ViewOffset, width, height)
+	g.World.Render(rend, g.ld, g.ViewOffset, width-ChatLogWidth, height)
 
 	for _, e := range g.Entities {
 		e.Render(g.ViewOffset, g.ld, rend)
 	}
 
 	if g.Player != nil {
+		ppos := geom.Vector{
+			X: (g.Player.ApparentPos.X * world.TileSize) + (ChatLogWidth / 2),
+			Y: g.Player.ApparentPos.Y * world.TileSize,
+		}
+
 		if g.shouldSetCam {
-			g.ViewOffset.X = float64(g.Player.ApparentPos.X*world.TileSize) - float64(width/2)
-			g.ViewOffset.Y = float64(g.Player.ApparentPos.Y*world.TileSize) - float64(height/2)
+			g.ViewOffset.X = float64(ppos.X) - float64(width/2)
+			g.ViewOffset.Y = float64(ppos.Y) - float64(height/2)
 
 			g.shouldSetCam = false
 
 		} else {
-			g.ViewOffset.X = lerp(g.ViewOffset.X, float64(g.Player.ApparentPos.X*world.TileSize)-float64(width/2), 0.01)
-			g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(g.Player.ApparentPos.Y*world.TileSize)-float64(height/2), 0.01)
+			g.ViewOffset.X = lerp(g.ViewOffset.X, float64(ppos.X)-float64(width/2), 0.01)
+			g.ViewOffset.Y = lerp(g.ViewOffset.Y, float64(ppos.Y)-float64(height/2), 0.01)
 		}
 
 		if g.ViewOffset.X < 0 {
@@ -123,14 +141,16 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 			g.ViewOffset.Y = 0
 		}
 
-		if g.ViewOffset.X+float64(width) > world.Width*world.TileSize {
-			g.ViewOffset.X = float64(world.Width*world.TileSize - width)
+		if g.ViewOffset.X+float64(width) > (world.Width*world.TileSize)+ChatLogWidth {
+			g.ViewOffset.X = float64(world.Width*world.TileSize - width + ChatLogWidth)
 		}
 
 		if g.ViewOffset.Y+float64(height) > world.Height*world.TileSize {
 			g.ViewOffset.Y = float64(world.Height*world.TileSize - height)
 		}
 	}
+
+	g.ChatLog.Render(rend, g.ld, width-ChatLogWidth, 0, ChatLogWidth, height)
 }
 
 // HandleEvent handles a window event, such as a mouse
@@ -141,6 +161,10 @@ func (g *Game) HandleEvent(event sdl.Event) string {
 
 		// If the left mouse button was clicked
 		if evt.Type == sdl.MOUSEBUTTONDOWN && evt.Button == sdl.BUTTON_LEFT {
+			if evt.X >= 1200-ChatLogWidth {
+				break
+			}
+
 			x, y := g.ViewportToRelative(evt.X, evt.Y)
 			tx, ty := g.PositionToTile(x, y)
 
@@ -157,7 +181,46 @@ func (g *Game) HandleEvent(event sdl.Event) string {
 		}
 
 	case *sdl.KeyUpEvent:
-		return "mainmenu"
+		if evt.Keysym.Sym == sdl.K_ESCAPE {
+			return "mainmenu"
+		}
+
+	case *sdl.KeyDownEvent:
+		switch evt.Keysym.Sym {
+		case sdl.K_BACKSPACE:
+			if len(g.ChatLog.Input) > 0 {
+				g.ChatLog.Input = g.ChatLog.Input[:len(g.ChatLog.Input)-1]
+			}
+
+		case sdl.K_RETURN:
+			if g.Player == nil {
+				break
+			}
+
+			g.Client.Send(&message.ChatMessage{
+				Content: g.ChatLog.Input,
+				Sender:  g.Player.Name,
+				Time:    time.Now(),
+				Type:    GlobalMessage,
+			})
+
+			g.ChatLog.Input = ""
+		}
+
+	case *sdl.TextInputEvent:
+		str := ""
+
+		// evt.Text is a null terminated c-string
+		// str is the normal Go string
+		for _, ch := range evt.Text {
+			if ch == 0 {
+				break
+			}
+
+			str += string(ch)
+		}
+
+		g.ChatLog.Input += str
 	}
 
 	return ""
