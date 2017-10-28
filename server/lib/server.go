@@ -51,8 +51,6 @@ func (s *Server) Listen() error {
 
 		go s.handleConnection(conn)
 	}
-
-	return nil
 }
 
 func (s *Server) handleConnection(conn net.Conn) {

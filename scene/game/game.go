@@ -63,6 +63,8 @@ func New(ld *loader.Loader, addr, name string) *Game {
 // Enter is called when a Game scene is entered.
 func (g *Game) Enter() {
 	go g.Client.Listen()
+
+	sdl.StartTextInput()
 }
 
 // Exit is called when a Game scene is exited.
@@ -70,6 +72,8 @@ func (g *Game) Exit() {
 	if !g.shouldQuit {
 		g.Client.LeaveGame()
 	}
+
+	sdl.StopTextInput()
 }
 
 // Update updates the game by 'dt' seconds. The returned
@@ -171,7 +175,35 @@ func (g *Game) HandleEvent(event sdl.Event) string {
 		}
 
 	case *sdl.KeyUpEvent:
-		return "mainmenu"
+		if evt.Keysym.Sym == sdl.K_ESCAPE {
+			return "mainmenu"
+		}
+
+	case *sdl.KeyDownEvent:
+		switch evt.Keysym.Sym {
+		case sdl.K_BACKSPACE:
+			if len(g.ChatLog.Input) > 0 {
+				g.ChatLog.Input = g.ChatLog.Input[:len(g.ChatLog.Input)-1]
+			}
+
+		case sdl.K_RETURN:
+			g.ChatLog.Input = ""
+		}
+
+	case *sdl.TextInputEvent:
+		str := ""
+
+		// evt.Text is a null terminated c-string
+		// str is the normal Go string
+		for _, ch := range evt.Text {
+			if ch == 0 {
+				break
+			}
+
+			str += string(ch)
+		}
+
+		g.ChatLog.Input += str
 	}
 
 	return ""

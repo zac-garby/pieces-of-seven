@@ -6,6 +6,7 @@ import (
 	"github.com/Zac-Garby/pieces-of-seven/geom"
 	"github.com/Zac-Garby/pieces-of-seven/loader"
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 type MessageType int
@@ -38,6 +39,7 @@ func (m Message) IsVisible(mask MessageType) bool {
 // as well as
 type ChatLog struct {
 	Messages []*Message
+	Input    string
 	Mask     MessageType
 }
 
@@ -60,7 +62,8 @@ func NewChatLog() *ChatLog {
 			},
 		},
 
-		Mask: DefaultMessageMask,
+		Input: "",
+		Mask:  DefaultMessageMask,
 	}
 }
 
@@ -96,31 +99,39 @@ func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, hei
 	rend.FillRect(bg)
 
 	var (
-		font    = ld.Fonts["body-sm"]
-		msgs    = c.GetVisible()
-		nextPos = geom.Coord{uint(x + 10), uint(y + 10)}
+		font = ld.Fonts["body-sm"]
+		msgs = c.GetVisible()
 	)
 
+	input, itex := renderText("> "+c.Input, font, sdl.Color{R: 30, G: 30, B: 30, A: 255}, rend, width-20)
+
+	var (
+		isrc = &input.ClipRect
+
+		idest = &sdl.Rect{
+			X: int32(x + 5),
+			Y: int32(height - int(isrc.H)),
+			W: isrc.W,
+			H: isrc.H,
+		}
+
+		inputbg = &sdl.Rect{
+			X: int32(x),
+			Y: int32(height - int(isrc.H)),
+			W: int32(width),
+			H: int32(isrc.H),
+		}
+	)
+
+	rend.SetDrawColor(220, 220, 220, 255)
+	rend.FillRect(inputbg)
+
+	rend.Copy(itex, isrc, idest)
+	nextPos := geom.Coord{X: uint(x + 10), Y: uint(y + 10 + int(isrc.H))}
+
 	for _, msg := range msgs {
-		user, err := font.RenderUTF8_Solid(msg.Sender, sdl.Color{R: 255, G: 255, B: 255, A: 255})
-		if err != nil {
-			panic(err)
-		}
-
-		utex, err := rend.CreateTextureFromSurface(user)
-		if err != nil {
-			panic(err)
-		}
-
-		content, err := font.RenderUTF8_Blended_Wrapped(msg.Content, sdl.Color{R: 200, G: 200, B: 200, A: 255}, width-20)
-		if err != nil {
-			panic(err)
-		}
-
-		ctex, err := rend.CreateTextureFromSurface(content)
-		if err != nil {
-			panic(err)
-		}
+		user, utex := renderText(msg.Sender, font, sdl.Color{R: 255, G: 255, B: 255, A: 255}, rend, -1)
+		content, ctex := renderText(msg.Content, font, sdl.Color{R: 200, G: 200, B: 200, A: 200}, rend, width-20)
 
 		var (
 			csrc = &content.ClipRect
@@ -150,4 +161,22 @@ func (c *ChatLog) Render(rend *sdl.Renderer, ld *loader.Loader, x, y, width, hei
 		rend.Copy(utex, usrc, udest)
 		nextPos.Y += uint(usrc.H + 10)
 	}
+}
+
+func renderText(text string, font *ttf.Font, colour sdl.Color, rend *sdl.Renderer, wrapWidth int) (*sdl.Surface, *sdl.Texture) {
+	if len(text) == 0 {
+		text = " "
+	}
+
+	var surface *sdl.Surface
+
+	if wrapWidth > 0 {
+		surface, _ = font.RenderUTF8_Blended_Wrapped(text, colour, wrapWidth)
+	} else {
+		surface, _ = font.RenderUTF8_Solid(text, colour)
+	}
+
+	tex, _ := rend.CreateTextureFromSurface(surface)
+
+	return surface, tex
 }
