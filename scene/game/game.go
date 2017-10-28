@@ -1,6 +1,8 @@
 package game
 
 import (
+	"time"
+
 	"github.com/Zac-Garby/pieces-of-seven/entity"
 	"github.com/Zac-Garby/pieces-of-seven/geom"
 	"github.com/Zac-Garby/pieces-of-seven/loader"
@@ -187,6 +189,16 @@ func (g *Game) HandleEvent(event sdl.Event) string {
 			}
 
 		case sdl.K_RETURN:
+			if g.Player == nil {
+				break
+			}
+
+			g.Client.Send(&message.ChatMessage{
+				Content: g.ChatLog.Input,
+				Sender:  g.Player.Name,
+				Time:    time.Now(),
+			})
+
 			g.ChatLog.Input = ""
 		}
 

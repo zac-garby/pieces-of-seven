@@ -176,6 +176,9 @@ func (s *Server) handleMessage(id uuid.UUID, msg interface{}) {
 
 	case *message.StateUpdate:
 		s.Players[id].Pos = m.Position
+
+	case *message.ChatMessage:
+		fmt.Printf("%s: %s\n", m.Sender, m.Content)
 	}
 }
 

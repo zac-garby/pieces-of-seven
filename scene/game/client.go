@@ -119,6 +119,8 @@ func (c *Client) handleMessage(msg interface{}) {
 			c.Game.Players[id] = ship
 		}
 
+		c.Game.Player.Name = c.Name
+
 	case *message.NewPlayer:
 		ship := entity.NewShip(
 			m.Player.Position.X,
