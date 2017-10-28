@@ -141,8 +141,8 @@ func (g *Game) Render(rend *sdl.Renderer, width, height int) {
 			g.ViewOffset.Y = 0
 		}
 
-		if g.ViewOffset.X+float64(width) > world.Width*world.TileSize {
-			g.ViewOffset.X = float64(world.Width*world.TileSize - width)
+		if g.ViewOffset.X+float64(width) > (world.Width*world.TileSize)+ChatLogWidth {
+			g.ViewOffset.X = float64(world.Width*world.TileSize - width + ChatLogWidth)
 		}
 
 		if g.ViewOffset.Y+float64(height) > world.Height*world.TileSize {
@@ -161,6 +161,10 @@ func (g *Game) HandleEvent(event sdl.Event) string {
 
 		// If the left mouse button was clicked
 		if evt.Type == sdl.MOUSEBUTTONDOWN && evt.Button == sdl.BUTTON_LEFT {
+			if evt.X >= 1200-ChatLogWidth {
+				break
+			}
+
 			x, y := g.ViewportToRelative(evt.X, evt.Y)
 			tx, ty := g.PositionToTile(x, y)
 
