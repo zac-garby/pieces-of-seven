@@ -179,6 +179,8 @@ func (s *Server) handleMessage(id uuid.UUID, msg interface{}) {
 
 	case *message.ChatMessage:
 		fmt.Printf("%s: %s\n", m.Sender, m.Content)
+
+		s.Broadcast(m)
 	}
 }
 
